@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "wagtail>=7.1",
+    "wagtail-factories",
 ]
 
 [dependency-groups]
@@ -92,3 +93,6 @@ docstring-code-format = false
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
+
+[tool.uv.sources]
+wagtail-factories = { git = "https://github.com/wagtail/wagtail-factories", rev = "47439313a8ce0c5df5a0e3a64e48bc27a43c7d67" }

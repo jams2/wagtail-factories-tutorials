@@ -1,0 +1,7 @@
+* Tutorial repo for [[https://github.com/wagtail/wagtail-factories][wagtail-factories]]
+
+This repository contains the source code for tutorials for [[https://github.com/wagtail/wagtail-factories][wagtail-factories]].
+
+See:
+
+- [[file:docs/tutorials/getting-started.org][getting-started.org]]
