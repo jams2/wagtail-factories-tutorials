@@ -285,7 +285,7 @@ It may also be desirable to control aspects of generated image files, such as di
 
 ** The page tree
 
-In the examples so far, we've shown isolated page instances that don't interact with one of Wagtail's key concepts: the page tree. By default, page instances created via a ~PageFactory~ subclass are not inserted into the tree.
+In the examples so far, we've shown isolated page instances that don't interact with one of Wagtail's key concepts: the page tree. By default, page instances created via a ~PageFactory~ subclass are not inserted into any existing page tree.
 
 #+begin_src python :results value pp :exports both
   BlogPageFactory().get_parent()

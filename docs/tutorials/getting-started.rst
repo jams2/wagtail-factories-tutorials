@@ -145,7 +145,7 @@ As has an image...
 
 ::
 
-    <WagtailImageFieldFile: original_images/example_p237eu7.jpg>
+    <WagtailImageFieldFile: original_images/example_UnNNW9s.jpg>
 
 
 ...a document...
@@ -156,7 +156,7 @@ As has an image...
 
 ::
 
-    <FieldFile: documents/example_y59xLMU.dat>
+    <FieldFile: documents/example_iIgr9BA.dat>
 
 
 ...and text.
@@ -226,7 +226,7 @@ Using the features provided by factory boy, it is possible to define parameters 
 
 ::
 
-    ('documents/my-test-doc_xEOJdRJ.txt', b'sample content')
+    ('documents/my-test-doc_jrqNyPY.txt', b'sample content')
 
 
 It may also be desirable to control aspects of generated image files, such as dimensions, colour, and file type.
@@ -252,7 +252,7 @@ It may also be desirable to control aspects of generated image files, such as di
 The page tree
 ~~~~~~~~~~~~~
 
-In the examples so far, we've shown isolated page instances that don't interact with one of Wagtail's key concepts: the page tree. By default, page instances created via a ``PageFactory`` subclass are not inserted into the tree.
+In the examples so far, we've shown isolated page instances that don't interact with one of Wagtail's key concepts: the page tree. By default, page instances created via a ``PageFactory`` subclass are not inserted into any existing page tree.
 
 .. code:: python
 
