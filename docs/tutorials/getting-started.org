@@ -2,8 +2,14 @@
 #+AUTHOR: Joshua Munn
 #+EMAIL: public@elysee-munn.family
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: header-args:python :python "uv run python" :session django :exports code
+#+PROPERTY: header-args:python :python "uv run python" :session getting-started-django :exports code
 #+PROPERTY: header-args:bash :session shell
+
+#+begin_src bash :exports none :var WORKDIR=(expand-file-name (project-root (project-current)))
+  rm -f $WORKDIR/db.sqlite3
+#+end_src
+
+#+RESULTS:
 
 #+begin_src python :exports none :var root = (expand-file-name (project-root (project-current)))
   import os
@@ -20,7 +26,7 @@
 
 * Goals
 
-In this tutorial, you will learn how to use the wagtail-factories library to create [[https://factoryboy.readthedocs.io/en/stable/][factory boy]] factories for a Wagtail project. These factories facilitate the easy creation of model instances, which is particularly useful for tests.
+In this tutorial, we will learn how to use the wagtail-factories library to create [[https://factoryboy.readthedocs.io/en/stable/][factory boy]] factories for a Wagtail project. These factories facilitate the easy creation of model instances, which is particularly useful for tests.
 
 We'll learn about factories for Wagtail's models - factories for stream field blocks will be covered in another document.
 
@@ -38,7 +44,7 @@ To get started, we'll create some basic page models. Wagtail gives us a ~HomePag
       pass
 #+end_src
 
-Add a ~BlogPage~ type with an ~ImageField~, a ~TextField~, and a foreign key to Wagtail's ~Page~ model.
+Add a ~BlogPage~ type with foreign keys to Wagtail's ~Page~, ~Image~, and ~Document~  models.
 
 #+begin_src python :eval no :tangle "../../home/models.py" :comments link
   from django.db import models
@@ -131,7 +137,7 @@ This one's simple. We can use it to create ~HomePage~ instances:
 #+RESULTS:
 : <HomePage: My temporary home page>
 
-Let's create ~BlogPageFactory~ with some more declarations.
+Let's create a ~BlogPageFactory~ with some more declarations.
 
 #+begin_src python :eval no :tangle "../../home/factories.py" :comments link
   from wagtail_factories import DocumentFactory, ImageFactory
@@ -169,7 +175,7 @@ First, let's generate an instance without any specific parameters.
 #+RESULTS:
 : <BlogPage: Test page>
 
-A title has been generated
+A title has been generated.
 
 #+begin_src python :results value pp :exports both
   blog_page.title
@@ -235,4 +241,133 @@ A related page was also generated: we can inspect its attributes.
 
 See the [[https://factoryboy.readthedocs.io/en/stable/index.html][factory boy docs]] for all the details.
 
+** Image and file details
+
+wagtail-factories uses factory boy's [[https://factoryboy.readthedocs.io/en/stable/orms.html#factory.django.FileField][FileField]] and [[https://factoryboy.readthedocs.io/en/stable/orms.html#factory.django.ImageField][ImageField]] for its ~DocumentFactory~ and ~ImageFactory~, respectively. As images and documents are important entities in a Content Management System, it may be desirable to control how they are created in our tests.
+
+Using the features provided by factory boy, it is possible to define parameters such as file name and contents for documents.
+
+#+begin_src python :results value pp :exports both
+  from io import BytesIO
+  from wagtail_factories import DocumentFactory
+
+
+  doc = DocumentFactory(
+      file__filename="my-test-doc.txt",
+      file__from_file=BytesIO(b"sample content"),
+  )
+
+  doc.file.name, doc.file.read()
+#+end_src
+
+#+RESULTS:
+: ('documents/my-test-doc_FOUkghx.txt', b'sample content')
+
+It may also be desirable to control aspects of generated image files, such as dimensions, colour, and file type.
+
+#+begin_src python :results value pp :exports both
+  from wagtail_factories import ImageFactory
+
+
+  image = ImageFactory(
+      file__filename="my-image.png",
+      file__width=100,
+      file__height=25,
+      file__format="PNG",
+  )
+
+  image.width, image.height
+#+end_src
+
+#+RESULTS:
+: (100, 25)
+
+
 ** The page tree
+
+In the examples so far, we've shown isolated page instances that don't interact with one of Wagtail's key concepts: the page tree. By default, page instances created via a ~PageFactory~ subclass are not inserted into the tree.
+
+#+begin_src python :results value pp :exports both
+  BlogPageFactory().get_parent()
+#+end_src
+
+#+RESULTS:
+: None
+
+In practice, we'll often want to replicate a real website's page structure in our tests, for example creating a home page with some children. To mirror a proper Wagtail tree structure, we need a root page, which is an entry in the tree that is not visitable by users, has no parents, and is the ancestor of every page in the tree. This is easy to create using wagtail-factories - in fact, every time we create a page from a factory without an explicit ~parent~ parameter, we are creating one:
+
+#+begin_src python :results value pp :exports both
+  from wagtail.models import Page
+
+
+  Page.get_root_nodes()
+#+end_src
+
+#+RESULTS:
+: <PageQuerySet [<Page: Root>, <Page: My temporary home page>, <Page: Test page>, <Page: Test page>, <Page: Closely related page>, <Page: My new blog>, <Page: Test page>, <Page: Test page>]>
+
+However, if we're using Wagtail's provided migrations, [[https://github.com/wagtail/wagtail/blob/c78838f6ee89fd8e01101326fa08a36babafd88d/wagtail/migrations/0002_initial_data.py#L17-L25][one is provided for us by default]], so we might like to retrieve and use it.
+
+#+begin_src python :results none :exports code
+  root = Page.get_first_root_node()
+
+  home = HomePageFactory(parent=root)
+#+end_src
+
+Surprisingly, our home page is still not routable. This is because it does not belong to a ~Site~.
+
+#+begin_src python :results value pp :exports both
+  home.url, home.get_site()
+#+end_src
+
+#+RESULTS:
+: (None, None)
+
+If we start our project with ~wagtail start~, Wagtail [[https://github.com/wagtail/wagtail/blob/c78838f6ee89fd8e01101326fa08a36babafd88d/wagtail/project_template/home/migrations/0002_create_homepage.py#L11-L35][creates an initial home page instance for us]]. We can use that instance in our tests.
+
+#+begin_src python :results value pp :exports both
+  from home.models import HomePage
+
+
+  HomePage.objects.first()
+#+end_src
+
+#+RESULTS:
+: <HomePage: Home>
+
+However, for complete control over the created instances, we can create our own.
+
+#+begin_src python :results value pp :exports both
+  from wagtail.models import Site
+
+
+  home = HomePageFactory(
+      title="My new home page 2",
+      # Use the root page instance created by Wagtail.
+      parent=Page.get_first_root_node(),
+  )
+
+  # Use the Site instance created by Wagtail.
+  site = Site.objects.get(is_default_site=True)
+
+  site.root_page = home
+  site.save()
+
+  home.url
+#+end_src
+
+#+RESULTS:
+: '/'
+
+We can then use our new home page as the parent of other pages, e.g. blog pages.
+
+#+begin_src python :results value pp :exports both
+  blog = BlogPageFactory(parent=home)
+
+  blog.url
+#+end_src
+
+#+RESULTS:
+: '/test-page/'
+
+Whether or not to use Wagtail's default data, or create it all in your test setup, will depend on the specifics of your project.
