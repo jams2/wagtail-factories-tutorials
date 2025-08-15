@@ -1,4 +1,4 @@
-# [[file:../docs/tutorials/getting-started.org::*Page factories][Page factories:1]]
+# [[file:../docs/tutorials/working-with-blocks.org::*Prerequisites from getting-started tutorial][Prerequisites from getting-started tutorial:4]]
 import factory
 from wagtail_factories import PageFactory
 
@@ -10,9 +10,9 @@ class HomePageFactory(PageFactory):
         model = HomePage
 
 
-# Page factories:1 ends here
+# Prerequisites from getting-started tutorial:4 ends here
 
-# [[file:../docs/tutorials/getting-started.org::*Page factories][Page factories:4]]
+# [[file:../docs/tutorials/working-with-blocks.org::*Prerequisites from getting-started tutorial][Prerequisites from getting-started tutorial:5]]
 from wagtail_factories import DocumentFactory, ImageFactory
 
 from home.models import BlogPage
@@ -28,4 +28,4 @@ class BlogPageFactory(PageFactory):
         model = BlogPage
 
 
-# Page factories:4 ends here
+# Prerequisites from getting-started tutorial:5 ends here

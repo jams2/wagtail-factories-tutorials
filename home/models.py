@@ -1,4 +1,4 @@
-# [[file:../docs/tutorials/getting-started.org::*Page models][Page models:1]]
+# [[file:../docs/tutorials/working-with-blocks.org::*Prerequisites from getting-started tutorial][Prerequisites from getting-started tutorial:2]]
 from wagtail.models import Page
 
 
@@ -6,9 +6,9 @@ class HomePage(Page):
     pass
 
 
-# Page models:1 ends here
+# Prerequisites from getting-started tutorial:2 ends here
 
-# [[file:../docs/tutorials/getting-started.org::*Page models][Page models:2]]
+# [[file:../docs/tutorials/working-with-blocks.org::*Prerequisites from getting-started tutorial][Prerequisites from getting-started tutorial:3]]
 from django.db import models
 from wagtail.documents import get_document_model
 from wagtail.images import get_image_model
@@ -37,4 +37,17 @@ class BlogPage(Page):
     )
 
 
-# Page models:2 ends here
+# Prerequisites from getting-started tutorial:3 ends here
+
+# [[file:../docs/tutorials/working-with-blocks.org::*Defining stream field blocks][Defining stream field blocks:1]]
+from wagtail.fields import StreamField
+from wagtail.models import Page
+
+from home.blocks import PetsBlock
+
+
+class PetPage(Page):
+    pets = StreamField(PetsBlock())
+
+
+# Defining stream field blocks:1 ends here

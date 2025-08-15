@@ -1,0 +1,183 @@
+#+TITLE: Working with blocks
+#+AUTHOR: Joshua Munn
+#+EMAIL: public@elysee-munn.family
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: header-args:python :python "uv run python" :session working-with-blocks-django :exports code
+#+PROPERTY: header-args:bash :session shell
+
+* Init :noexport:
+
+#+begin_src python :exports none :var root = (expand-file-name (project-root (project-current)))
+  import os
+  import django
+
+  os.chdir(root)
+  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tutorial.settings.dev")
+  django.setup()
+#+end_src
+
+#+RESULTS:
+: None
+
+* Prerequisites from getting-started tutorial :noexport:
+
+The following code blocks are automatically extracted from the getting-started tutorial:
+
+#+begin_src elisp :exports none :results value drawer
+  (defun extract-all-tangle-blocks (file)
+    "Extract all src blocks that have :tangle parameter from FILE."
+    (with-temp-buffer
+      (insert-file-contents file)
+      (goto-char (point-min))
+      (let ((blocks '()))
+        (while (re-search-forward "^#\\+begin_src.*:tangle" nil t)
+          (beginning-of-line)
+          (let ((block-start (point)))
+            (when (re-search-forward "^#\\+end_src" nil t)
+              (push (buffer-substring-no-properties block-start (point)) blocks))))
+        (reverse blocks))))
+
+  (let* ((getting-started-path (expand-file-name "docs/tutorials/getting-started.org" (project-root (project-current))))
+         (tangle-blocks (extract-all-tangle-blocks getting-started-path)))
+    (if tangle-blocks
+        (string-join tangle-blocks "\n\n")
+      ""))
+#+end_src
+
+#+RESULTS:
+:results:
+#+begin_src python :eval no :tangle "../../home/models.py" :comments link
+  from wagtail.models import Page
+
+
+  class HomePage(Page):
+      pass
+#+end_src
+
+#+begin_src python :eval no :tangle "../../home/models.py" :comments link
+  from django.db import models
+  from wagtail.documents import get_document_model
+  from wagtail.images import get_image_model
+
+
+  class BlogPage(Page):
+      hero_image = models.ForeignKey(
+          get_image_model(),
+          on_delete=models.PROTECT,
+          related_name="+",
+      )
+      splash_text = models.TextField(blank=True)
+      related_page = models.ForeignKey(
+          Page,
+          null=True,
+          blank=True,
+          on_delete=models.SET_NULL,
+          related_name="related_pages",
+      )
+      policy = models.ForeignKey(
+          get_document_model(),
+          null=True,
+          blank=True,
+          on_delete=models.SET_NULL,
+          related_name="+",
+      )
+#+end_src
+
+#+begin_src python :eval no :tangle "../../home/factories.py" :comments link
+  import factory
+  from wagtail_factories import PageFactory
+
+  from home.models import HomePage
+
+
+  class HomePageFactory(PageFactory):
+      class Meta:
+          model = HomePage
+#+end_src
+
+#+begin_src python :eval no :tangle "../../home/factories.py" :comments link
+  from wagtail_factories import DocumentFactory, ImageFactory
+
+  from home.models import BlogPage
+
+
+  class BlogPageFactory(PageFactory):
+      hero_image = factory.SubFactory(ImageFactory)
+      splash_text = factory.Faker("paragraph")
+      related_page = factory.SubFactory(PageFactory)
+      policy = factory.SubFactory(DocumentFactory)
+
+      class Meta:
+          model = BlogPage
+#+end_src
+:end:
+
+* Goals
+
+One of Wagtail's killer features is the [[https://docs.wagtail.org/en/stable/topics/streamfield.html][stream field system for flexible content]]. In this tutorial we will learn how to create and use factory classes that enable us to generate content for stream field blocks, just like we would with factories for Django models.
+
+We assume a working knowledge of Wagtail, a passing knowledge of [[https://factoryboy.readthedocs.io/en/stable/][factory boy]], and familiarity with the basics of wagtail-factories, as explained in the getting started tutorial.
+
+* Defining stream field blocks
+
+Before creating factories, we will create a Django model with a stream field and a set of blocks that define its content model. Create the following model for a fictional pet adoption charity in ~home.models~.
+
+#+begin_src python :eval no :tangle "../../home/models.py" :comments link
+  from wagtail.fields import StreamField
+  from wagtail.models import Page
+
+  from home.blocks import PetsBlock
+
+
+  class PetPage(Page):
+      pets = StreamField(PetsBlock())
+#+end_src
+
+We need to define ~PetsBlock~, so create it in ~home.blocks~.
+
+#+begin_src python :eval no :tangle "../../home/blocks.py" :comments link
+  from wagtail import blocks
+  from wagtail.images.blocks import ImageBlock
+
+
+  def get_colour_choices():
+      return [
+          ("calico", "Calico"),
+          ("tabby", "Tabby"),
+          ("orange", "Orange"),
+      ]
+
+
+  class ScheduledFeedingBlock(blocks.StructBlock):
+      time = blocks.TimeBlock()
+      portions = blocks.IntegerBlock()
+      food = blocks.CharBlock()
+
+
+  class PetBlock(blocks.StructBlock):
+      story = blocks.StreamBlock(
+          [
+              ("text", blocks.TextBlock()),
+              ("link", blocks.URLBlock()),
+              ("image", ImageBlock()),
+          ]
+      )
+      name = blocks.CharBlock()
+      date_of_birth = blocks.DateBlock()
+      feeding_schedule = blocks.ListBlock(ScheduledFeedingBlock())
+      colour = blocks.ChoiceBlock(choices=get_colour_choices)
+      picture = ImageBlock()
+
+
+  class CatBlock(PetBlock):
+      pass
+
+
+  class DogBlock(PetBlock):
+      pass
+
+
+  class PetsBlock(blocks.StreamBlock):
+      cat = CatBlock()
+      dog = DogBlock()
+#+end_src

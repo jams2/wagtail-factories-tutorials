@@ -5,3 +5,4 @@ This repository contains the source code for tutorials for [[https://github.com/
 See:
 
 - [[file:docs/tutorials/getting-started.org][getting-started.org]] ([[file:docs/tutorials/getting-started.rst][rendered]])
+- [[file:docs/tutorials/working-with-blocks.org][working-with-blocks.org]]
