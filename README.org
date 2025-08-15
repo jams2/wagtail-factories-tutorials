@@ -4,4 +4,4 @@ This repository contains the source code for tutorials for [[https://github.com/
 
 See:
 
-- [[file:docs/tutorials/getting-started.org][getting-started.org]]
+- [[file:docs/tutorials/getting-started.org][getting-started.org]] ([[file:docs/tutorials/getting-started.rst][rendered]])
