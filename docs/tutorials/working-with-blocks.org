@@ -21,7 +21,7 @@
 
 * Prerequisites from getting-started tutorial :noexport:
 
-The following code blocks are automatically extracted from the getting-started tutorial:
+The following code blocks are automatically extracted from the getting-started tutorial, as if we just tangle this file without them it overwrites the model definitions from that file.
 
 #+begin_src elisp :exports none :results value drawer
   (defun extract-all-tangle-blocks (file)
@@ -181,3 +181,29 @@ We need to define ~PetsBlock~, so create it in ~home.blocks~.
       cat = CatBlock()
       dog = DogBlock()
 #+end_src
+
+The block definition contains a variety of structures:
+
+- a named stream block (~PetsBlock~);
+- an anonymous stream block (~PetBlock.story~);
+- a list block;
+- struct blocks;
+- image blocks;
+- choice blocks; and
+- various atomic block types.
+
+Create and run the migrations.
+
+#+begin_src bash :results output :exports code
+  uv run python manage.py makemigrations --noinput --no-color
+  uv run python manage.py migrate --noinput --no-color
+#+end_src
+
+#+RESULTS:
+: Migrations for 'home':
+:   home/migrations/0005_petpage.py
+:     + Create model PetPage
+: Operations to perform:
+:   Apply all migrations: admin, auth, contenttypes, home, sessions, taggit, wagtailadmin, wagtailcore, wagtaildocs, wagtailembeds, wagtailforms, wagtailimages, wagtailredirects, wagtailsearch, wagtailusers
+: Running migrations:
+:   Applying home.0005_petpage... OK
