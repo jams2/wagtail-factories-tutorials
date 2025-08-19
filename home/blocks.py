@@ -17,14 +17,14 @@ class ScheduledFeedingBlock(blocks.StructBlock):
     food = blocks.CharBlock()
 
 
+class PetStoryBlock(blocks.StreamBlock):
+    text = blocks.TextBlock()
+    link = blocks.URLBlock()
+    image = ImageBlock()
+
+
 class PetBlock(blocks.StructBlock):
-    story = blocks.StreamBlock(
-        [
-            ("text", blocks.TextBlock()),
-            ("link", blocks.URLBlock()),
-            ("image", ImageBlock()),
-        ]
-    )
+    story = PetStoryBlock()
     name = blocks.CharBlock()
     date_of_birth = blocks.DateBlock()
     feeding_schedule = blocks.ListBlock(ScheduledFeedingBlock())
