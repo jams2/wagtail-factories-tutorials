@@ -567,7 +567,7 @@ This lets us specify the position of the block in the stream, the type of block,
 
 However, indices /must/ start at zero, and /must/ be sequential.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports code :results value pp :eval no
   f.PetStoryBlockFactory(**{"0": "link", "7": "link"})
 #+end_src
 
@@ -579,7 +579,7 @@ wagtail_factories.builder.InvalidDeclaration:
 
 We can also use double-underscores to traverse the block definition tree, and specify values for nested compound blocks, such as the image block option in ~PetStoryBlock~.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   with_image = f.PetStoryBlockFactory(**{"0__image__decorative": True})
   with_image[0].value.decorative
 #+end_src
@@ -595,7 +595,7 @@ This declaration can be read as:
 
 To specify multiple values for a particular nested block, we can add declarations with the same ~<index>__<block_name>~ prefix.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   with_image = f.PetStoryBlockFactory(
       ,**{
           "0__image__decorative": False,
@@ -660,7 +660,7 @@ The syntax is:
 
 Let's create some ~PetBlock~ instances, providing values for the feeding schedule.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   f.PetBlockFactory()
 #+end_src
 
@@ -674,7 +674,7 @@ Let's create some ~PetBlock~ instances, providing values for the feeding schedul
 
 Without parameters, an empty ~ListValue~ is generated for ~feeding_schedule~. Let's add some data for a pet that loves tuna.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   from datetime import time
 
   f.PetBlockFactory(
@@ -692,7 +692,7 @@ Without parameters, an empty ~ListValue~ is generated for ~feeding_schedule~. Le
 
 If we only care /when/ the pet is fed, we can declare the times only, and the factory mechanisms will take care of the rest.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   f.PetBlockFactory(
       feeding_schedule__0__time=time(6, 0),
       feeding_schedule__1__time=time(12, 0),
@@ -790,7 +790,7 @@ This hierarchy shows how each factory builds upon its sub-factories, creating a 
 
 We can now test our factories, and get familiar with the syntax for declaring stream field structures. The simplest use is to call the ~PetPageFactory~ with no parameters.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory()
   page
 #+end_src
@@ -800,7 +800,7 @@ We can now test our factories, and get familiar with the syntax for declaring st
 
 We can see that the stream field is empty.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page.pets
 #+end_src
 
@@ -809,7 +809,7 @@ We can see that the stream field is empty.
 
 Let's create a ~CatBlock~ and a ~DogBlock~ at the top level, using the factory defaults.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory(
       pets__0="cat",
       pets__1="dog",
@@ -830,7 +830,7 @@ pets__0="cat"
 
 Let's create an instance with some specific values for the ~CatBlock~ struct block.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory(
       pets__0__cat__name="Praxidike",
       pets__0__cat__colour="tabby",
@@ -854,7 +854,7 @@ What about nested stream blocks? ~CatBlock.story~ is such a block. To declare va
 <index>__<block name>=<value>
 #+end_quote
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory(
       pets__0__cat__name="Praxidike",
       pets__0__cat__colour="tabby",
@@ -879,7 +879,7 @@ This composes across field and factory boundaries as in our other examples. So, 
 <index>__<field name>=<value>
 #+end_quote
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory(
       pets__0__cat__feeding_schedule__0__time="06:00:00",
       pets__0__cat__feeding_schedule__1__food="tuna",
@@ -893,7 +893,7 @@ This composes across field and factory boundaries as in our other examples. So, 
 
 Finally, here's an example of specifying multiple fields on multiple stream elements.
 
-#+begin_src python :exports code :results value pp
+#+begin_src python :exports both :results value pp
   page = f.PetPageFactory(
       pets__0__cat__name="Frog",
       pets__0__cat__story__0="text",

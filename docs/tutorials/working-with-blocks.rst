@@ -169,9 +169,9 @@ In this example, we're using the API exposed by ``factory.Faker``. This helps us
 
 ::
 
-    StructValue([('time', datetime.time(7, 3, 55, 232225)),
-                 ('portions', 30),
-                 ('food', 'tuna')])
+    StructValue([('time', datetime.time(23, 44, 20, 394650)),
+                 ('portions', 91),
+                 ('food', 'kibble')])
 
 
 We can also specify values for some or all of the fields.
@@ -185,7 +185,7 @@ We can also specify values for some or all of the fields.
 
 ::
 
-    StructValue([('time', datetime.time(11, 21, 27, 217783)),
+    StructValue([('time', datetime.time(0, 55, 43, 57250)),
                  ('portions', 3),
                  ('food', 'kibble')])
 
@@ -266,7 +266,7 @@ So, to create an instance of ``PetStoryBlock`` where the first element is a text
 
 ::
 
-    <StreamValue [<block text: 'Soon for dream itself policy half.'>]>
+    <StreamValue [<block text: 'Hit into field political stuff.'>]>
 
 
 This creates a block instance at index 0 using a default value as provided by the ``text`` declaration on ``PetStoryBlockFactory``.
@@ -277,7 +277,7 @@ The syntax for the "specified value" flavour looks like this:
 
 ::
 
-    <index>\_\_<block name>=<value>
+    <index>__<block name>=<value>
 
 For example:
 
@@ -298,7 +298,7 @@ This lets us specify the position of the block in the stream, the type of block,
 
 ::
 
-    <StreamValue [<block text: 'hello'>, <block link: 'https://www.carroll.info/searchsearch.html'>, <block text: 'Affect keep show specific.'>]>
+    <StreamValue [<block text: 'hello'>, <block link: 'http://www.vaughn.com/tags/categorymain.htm'>, <block text: 'Game project play box college course.'>]>
 
 
 However, indices *must* start at zero, and *must* be sequential.
@@ -309,7 +309,7 @@ However, indices *must* start at zero, and *must* be sequential.
 
 ::
 
-    wagtail\ :sub:`factories.builder.InvalidDeclaration`\:
+    wagtail_factories.builder.InvalidDeclaration:
       Parameters for <PetStoryBlockFactory for <class 'home.blocks.PetStoryBlock'>>
       missing required index 1
 
@@ -320,11 +320,16 @@ We can also use double-underscores to traverse the block definition tree, and sp
     with_image = f.PetStoryBlockFactory(**{"0__image__decorative": True})
     with_image[0].value.decorative
 
+::
+
+    True
+
+
 This declaration can be read as:
 
 ::
 
-    <index>\_\_<block name>\_\_<block field>=<value>
+    <index>__<block name>__<block field>=<value>
 
 To specify multiple values for a particular nested block, we can add declarations with the same ``<index>__<block_name>`` prefix.
 
@@ -339,6 +344,10 @@ To specify multiple values for a particular nested block, we can add declaration
     )
 
     with_image[0].value.decorative, with_image[0].value.contextual_alt_text
+
+::
+
+    (False, 'An orange cat lying in the sun')
 
 Factories for list blocks
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -399,6 +408,16 @@ Let's create some ``PetBlock`` instances, providing values for the feeding sched
 
     f.PetBlockFactory()
 
+::
+
+    StructValue([('story', <StreamValue []>),
+                 ('name', 'Robert Bradley'),
+                 ('date_of_birth', datetime.date(1984, 2, 26)),
+                 ('feeding_schedule', <ListValue: []>),
+                 ('colour', 'tabby'),
+                 ('picture', <Image: An image>)])
+
+
 Without parameters, an empty ``ListValue`` is generated for ``feeding_schedule``. Let's add some data for a pet that loves tuna.
 
 .. code:: python
@@ -414,6 +433,11 @@ Without parameters, an empty ``ListValue`` is generated for ``feeding_schedule``
         feeding_schedule__2__time=time(18, 0),
     )["feeding_schedule"]
 
+::
+
+    <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 63), ('food', 'tuna')]), StructValue([('time', datetime.time(12, 0)), ('portions', 24), ('food', 'tuna')]), StructValue([('time', datetime.time(18, 0)), ('portions', 38), ('food', 'tuna')])]>
+
+
 If we only care *when* the pet is fed, we can declare the times only, and the factory mechanisms will take care of the rest.
 
 .. code:: python
@@ -424,6 +448,11 @@ If we only care *when* the pet is fed, we can declare the times only, and the fa
         feeding_schedule__2__time=time(18, 0),
         feeding_schedule__3__time=time(23, 0),
     )["feeding_schedule"]
+
+::
+
+    <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 44), ('food', 'kibble')]), StructValue([('time', datetime.time(12, 0)), ('portions', 29), ('food', 'carrots')]), StructValue([('time', datetime.time(18, 0)), ('portions', 97), ('food', 'tuna')]), StructValue([('time', datetime.time(23, 0)), ('portions', 4), ('food', 'carrots')])]>
+
 
 As with stream block factories, the aggregated block indices must result in an uninterrupted sequence of integers starting from 0.
 
@@ -518,11 +547,21 @@ We can now test our factories, and get familiar with the syntax for declaring st
     page = f.PetPageFactory()
     page
 
+::
+
+    <PetPage: Test page>
+
+
 We can see that the stream field is empty.
 
 .. code:: python
 
     page.pets
+
+::
+
+    <StreamValue []>
+
 
 Let's create a ``CatBlock`` and a ``DogBlock`` at the top level, using the factory defaults.
 
@@ -534,13 +573,18 @@ Let's create a ``CatBlock`` and a ``DogBlock`` at the top level, using the facto
     )
     page.pets
 
+::
+
+    <StreamValue [<block cat: StructValue([('story', <StreamValue []>), ('name', 'Matthew Armstrong'), ('date_of_birth', datetime.date(2012, 12, 27)), ('feeding_schedule', <ListValue: []>), ('colour', 'tabby'), ('picture', <Image: An image>)])>, <block dog: StructValue([('story', <StreamValue []>), ('name', 'Gregory Nunez'), ('date_of_birth', datetime.date(2016, 10, 5)), ('feeding_schedule', <ListValue: []>), ('colour', 'orange'), ('picture', <Image: An image>)])>]>
+
+
 The syntax used here mirrors the "default value" syntax described `Using a stream block factory`_, with the added prefix for the stream field name:
 
 ::
 
-    pets\_\ :sub:`0`\="cat"
+    pets__0="cat"
 
-    <model field name>\_\_<stream field index>=<block name>
+    <model field name>__<stream field index>=<block name>
 
 Let's create an instance with some specific values for the ``CatBlock`` struct block.
 
@@ -552,18 +596,23 @@ Let's create an instance with some specific values for the ``CatBlock`` struct b
     )
     page.pets[0]
 
+::
+
+    <block cat: StructValue([('story', <StreamValue []>), ('name', 'Praxidike'), ('date_of_birth', datetime.date(1979, 8, 1)), ('feeding_schedule', <ListValue: []>), ('colour', 'tabby'), ('picture', <Image: An image>)])>
+
+
 The declaration syntax here is:
 
 ::
 
-    <field>\_\_<index>\_\_<block name>\_\_<field name>=<value>
+    <field>__<index>__<block name>__<field name>=<value>
 
 What about nested stream blocks? ``CatBlock.story`` is such a block. To declare values, we follow the syntactic patterns we've already encountered for stream values:
 
 ::
 
     <index>=<block name> for a default; or
-    <index>\_\_<block name>=<value>
+    <index>__<block name>=<value>
 
 .. code:: python
 
@@ -575,6 +624,11 @@ What about nested stream blocks? ``CatBlock.story`` is such a block. To declare 
     )
     page.pets[0]
 
+::
+
+    <block cat: StructValue([('story', <StreamValue [<block text: 'Customer religious less beat.'>, <block link: 'https://http.cat/'>]>), ('name', 'Praxidike'), ('date_of_birth', datetime.date(1980, 3, 12)), ('feeding_schedule', <ListValue: []>), ('colour', 'tabby'), ('picture', <Image: An image>)])>
+
+
 Prax needs to eat, so we should add some entries to the feeding schedule. Recall that the basic syntax for declaring list block elements is:
 
 ::
@@ -585,7 +639,7 @@ This composes across field and factory boundaries as in our other examples. So, 
 
 ::
 
-    <index>\_\_<field name>=<value>
+    <index>__<field name>=<value>
 
 .. code:: python
 
@@ -595,6 +649,11 @@ This composes across field and factory boundaries as in our other examples. So, 
     )
     page.refresh_from_db()          # Normalizes the time value.
     page.pets[0].value["feeding_schedule"]
+
+::
+
+    <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 37), ('food', 'tuna')]), StructValue([('time', datetime.time(10, 7, 23, 441000)), ('portions', 54), ('food', 'tuna')])]>
+
 
 Finally, here's an example of specifying multiple fields on multiple stream elements.
 
@@ -615,6 +674,10 @@ Finally, here's an example of specifying multiple fields on multiple stream elem
     )
 
     page
+
+::
+
+    <PetPage: Test page>
 
 
 .. [1] Technically we can use ``factory.SubFactory`` instead of ``StreamFieldFactory`` for nested stream block factory declarations, and it is common to see this in the wild. However, this will result in errors if the containing block factory is used directly - i.e. not in the context of a containing model factory with a top level ``StreamFieldFactory``. This discrepancy should be resolved in a future release of wagtail-factories.
