@@ -68,19 +68,18 @@ class PetStoryBlockFactory(StreamBlockFactory):
 
 # Stream block factories:2 ends here
 
-# [[file:../docs/tutorials/working-with-blocks.org::*Tying it all together][Tying it all together:1]]
+# [[file:../docs/tutorials/working-with-blocks.org::*Factories for list blocks][Factories for list blocks:1]]
 from wagtail_factories import (
     ListBlockFactory,
     PageFactory,
     StreamFieldFactory,
 )
 
-from home.blocks import CatBlock, DogBlock, PetBlock, PetsBlock, get_colour_choices
-from home.models import PetPage
+from home.blocks import PetBlock, get_colour_choices
 
 
 class PetBlockFactory(StructBlockFactory):
-    story = factory.SubFactory(PetStoryBlockFactory)
+    story = StreamFieldFactory(PetStoryBlockFactory)
     name = factory.Faker("name")
     date_of_birth = factory.Faker("date_object")
     feeding_schedule = ListBlockFactory(ScheduledFeedingBlockFactory)
@@ -93,6 +92,12 @@ class PetBlockFactory(StructBlockFactory):
         model = PetBlock
 
 
+# Factories for list blocks:1 ends here
+
+# [[file:../docs/tutorials/working-with-blocks.org::*Tying it all together][Tying it all together:1]]
+from home.blocks import CatBlock, DogBlock
+
+
 class CatBlockFactory(PetBlockFactory):
     class Meta:
         model = CatBlock
@@ -103,12 +108,29 @@ class DogBlockFactory(PetBlockFactory):
         model = DogBlock
 
 
+# Tying it all together:1 ends here
+
+# [[file:../docs/tutorials/working-with-blocks.org::*Tying it all together][Tying it all together:2]]
+from home.blocks import PetsBlock
+
+
 class PetsBlockFactory(StreamBlockFactory):
     cat = factory.SubFactory(CatBlockFactory)
     dog = factory.SubFactory(DogBlockFactory)
 
     class Meta:
         model = PetsBlock
+
+
+# Tying it all together:2 ends here
+
+# [[file:../docs/tutorials/working-with-blocks.org::*Tying it all together][Tying it all together:3]]
+from wagtail_factories import (
+    PageFactory,
+    StreamFieldFactory,
+)
+
+from home.models import PetPage
 
 
 class PetPageFactory(PageFactory):
@@ -118,4 +140,4 @@ class PetPageFactory(PageFactory):
         model = PetPage
 
 
-# Tying it all together:1 ends here
+# Tying it all together:3 ends here

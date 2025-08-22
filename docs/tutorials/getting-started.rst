@@ -155,7 +155,7 @@ As has an image...
 
 ::
 
-    <WagtailImageFieldFile: original_images/example_6bp0ETK.jpg>
+    <WagtailImageFieldFile: original_images/example_WGodNWK.jpg>
 
 
 ...a document...
@@ -166,7 +166,7 @@ As has an image...
 
 ::
 
-    <FieldFile: documents/example_5Wppv1G.dat>
+    <FieldFile: documents/example_HxlsHjf.dat>
 
 
 ...and text.
@@ -236,7 +236,7 @@ Using the features provided by factory boy, it is possible to define parameters 
 
 ::
 
-    ('documents/my-test-doc_zy12o1J.txt', b'sample content')
+    ('documents/my-test-doc_zdU3J7g.txt', b'sample content')
 
 
 It may also be desirable to control aspects of generated image files, such as dimensions, colour, and file type.

@@ -133,7 +133,7 @@ Before creating any factories, we will create a Django model with a stream field
       pets = StreamField(PetsBlock())
 #+end_src
 
-We need to define ~PetsBlock~, so create it in ~home/blocks.py~.
+We need to define ~PetsBlock~, so create it and its sub-blocks in ~home/blocks.py~.
 
 #+begin_src python :eval no :tangle "../../home/blocks.py" :comments link
   from wagtail import blocks
@@ -189,7 +189,7 @@ The block definition contains a variety of structures:
 - struct blocks;
 - image blocks;
 - choice blocks; and
-- various atomic block types.
+- various other atomic block types.
 
 Create and run the migrations.
 
@@ -199,13 +199,195 @@ Create and run the migrations.
 #+end_src
 
 #+RESULTS:
-: Migrations for 'home':
-:   home/migrations/0005_petpage.py
-:     + Create model PetPage
-: Operations to perform:
-:   Apply all migrations: admin, auth, contenttypes, home, sessions, taggit, wagtailadmin, wagtailcore, wagtaildocs, wagtailembeds, wagtailforms, wagtailimages, wagtailredirects, wagtailsearch, wagtailusers
-: Running migrations:
-:   Applying home.0005_petpage... OK
+#+begin_example
+No changes detected
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, home, sessions, taggit, wagtailadmin, wagtailcore, wagtaildocs, wagtailembeds, wagtailforms, wagtailimages, wagtailredirects, wagtailsearch, wagtailusers
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying wagtailcore.0001_squashed_0016_change_page_url_path_to_text_field... OK
+  Applying wagtailcore.0017_change_edit_page_permission_description... OK
+  Applying wagtailcore.0018_pagerevision_submitted_for_moderation_index... OK
+  Applying wagtailcore.0019_verbose_names_cleanup... OK
+  Applying wagtailcore.0020_add_index_on_page_first_published_at... OK
+  Applying wagtailcore.0021_capitalizeverbose... OK
+  Applying wagtailcore.0022_add_site_name... OK
+  Applying wagtailcore.0023_alter_page_revision_on_delete_behaviour... OK
+  Applying wagtailcore.0024_collection... OK
+  Applying wagtailcore.0025_collection_initial_data... OK
+  Applying wagtailcore.0026_group_collection_permission... OK
+  Applying wagtailcore.0027_fix_collection_path_collation... OK
+  Applying wagtailcore.0024_alter_page_content_type_on_delete_behaviour... OK
+  Applying wagtailcore.0028_merge... OK
+  Applying wagtailcore.0029_unicode_slugfield_dj19... OK
+  Applying wagtailcore.0030_index_on_pagerevision_created_at... OK
+  Applying wagtailcore.0031_add_page_view_restriction_types... OK
+  Applying wagtailcore.0032_add_bulk_delete_page_permission... OK
+  Applying wagtailcore.0033_remove_golive_expiry_help_text... OK
+  Applying wagtailcore.0034_page_live_revision... OK
+  Applying wagtailcore.0035_page_last_published_at... OK
+  Applying wagtailcore.0036_populate_page_last_published_at... OK
+  Applying wagtailcore.0037_set_page_owner_editable... OK
+  Applying wagtailcore.0038_make_first_published_at_editable... OK
+  Applying wagtailcore.0039_collectionviewrestriction... OK
+  Applying wagtailcore.0040_page_draft_title... OK
+  Applying wagtailcore.0041_group_collection_permissions_verbose_name_plural... OK
+  Applying wagtailcore.0042_index_on_pagerevision_approved_go_live_at... OK
+  Applying wagtailcore.0043_lock_fields... OK
+  Applying wagtailcore.0044_add_unlock_grouppagepermission... OK
+  Applying wagtailcore.0045_assign_unlock_grouppagepermission... OK
+  Applying wagtailcore.0046_site_name_remove_null... OK
+  Applying wagtailcore.0047_add_workflow_models... OK
+  Applying wagtailcore.0048_add_default_workflows... OK
+  Applying wagtailcore.0049_taskstate_finished_by... OK
+  Applying wagtailcore.0050_workflow_rejected_to_needs_changes... OK
+  Applying wagtailcore.0051_taskstate_comment... OK
+  Applying wagtailcore.0052_pagelogentry... OK
+  Applying home.0001_initial... OK
+  Applying home.0002_create_homepage... OK
+  Applying wagtailcore.0053_locale_model... OK
+  Applying wagtailcore.0054_initial_locale... OK
+  Applying wagtailcore.0055_page_locale_fields... OK
+  Applying wagtailcore.0056_page_locale_fields_populate... OK
+  Applying wagtailcore.0057_page_locale_fields_notnull... OK
+  Applying wagtailcore.0058_page_alias_of... OK
+  Applying wagtailcore.0059_apply_collection_ordering... OK
+  Applying wagtailcore.0060_fix_workflow_unique_constraint... OK
+  Applying wagtailcore.0061_change_promote_tab_helpt_text_and_verbose_names... OK
+  Applying wagtailcore.0062_comment_models_and_pagesubscription... OK
+  Applying wagtailcore.0063_modellogentry... OK
+  Applying wagtailcore.0064_log_timestamp_indexes... OK
+  Applying wagtailcore.0065_log_entry_uuid... OK
+  Applying wagtailcore.0066_collection_management_permissions... OK
+  Applying wagtailcore.0067_alter_pagerevision_content_json... OK
+  Applying wagtailcore.0068_log_entry_empty_object... OK
+  Applying wagtailcore.0069_log_entry_jsonfield... OK
+  Applying wagtailcore.0070_rename_pagerevision_revision... OK
+  Applying wagtailcore.0071_populate_revision_content_type... OK
+  Applying wagtailcore.0072_alter_revision_content_type_notnull... OK
+  Applying wagtailcore.0073_page_latest_revision... OK
+  Applying wagtailcore.0074_revision_object_str... OK
+  Applying wagtailcore.0075_populate_latest_revision_and_revision_object_str... OK
+  Applying wagtailcore.0076_modellogentry_revision... OK
+  Applying wagtailcore.0077_alter_revision_user... OK
+  Applying wagtailcore.0078_referenceindex... OK
+  Applying wagtailcore.0079_rename_taskstate_page_revision... OK
+  Applying wagtailcore.0080_generic_workflowstate... OK
+  Applying wagtailcore.0081_populate_workflowstate_content_type... OK
+  Applying wagtailcore.0082_alter_workflowstate_content_type_notnull... OK
+  Applying wagtailcore.0083_workflowcontenttype... OK
+  Applying wagtailcore.0084_add_default_page_permissions... OK
+  Applying wagtailcore.0085_add_grouppagepermission_permission... OK
+  Applying wagtailcore.0086_populate_grouppagepermission_permission... OK
+  Applying wagtailcore.0087_alter_grouppagepermission_unique_together_and_more... OK
+  Applying wagtailcore.0088_fix_log_entry_json_timestamps... OK
+  Applying wagtailcore.0089_log_entry_data_json_null_to_object... OK
+  Applying wagtailcore.0090_remove_grouppagepermission_permission_type... OK
+  Applying wagtailcore.0091_remove_revision_submitted_for_moderation... OK
+  Applying wagtailcore.0092_alter_collectionviewrestriction_password_and_more... OK
+  Applying wagtailcore.0093_uploadedfile... OK
+  Applying wagtailcore.0094_alter_page_locale... OK
+  Applying wagtailcore.0095_groupsitepermission... OK
+  Applying taggit.0001_initial... OK
+  Applying wagtaildocs.0001_initial... OK
+  Applying wagtaildocs.0002_initial_data... OK
+  Applying wagtaildocs.0003_add_verbose_names... OK
+  Applying wagtaildocs.0004_capitalizeverbose... OK
+  Applying wagtaildocs.0005_document_collection... OK
+  Applying wagtaildocs.0006_copy_document_permissions_to_collections... OK
+  Applying wagtaildocs.0005_alter_uploaded_by_user_on_delete_action... OK
+  Applying wagtaildocs.0007_merge... OK
+  Applying wagtaildocs.0008_document_file_size... OK
+  Applying wagtaildocs.0009_document_verbose_name_plural... OK
+  Applying wagtaildocs.0010_document_file_hash... OK
+  Applying wagtailadmin.0001_create_admin_access_permissions... OK
+  Applying wagtaildocs.0011_add_choose_permissions... OK
+  Applying wagtaildocs.0012_uploadeddocument... OK
+  Applying wagtaildocs.0013_delete_uploadeddocument... OK
+  Applying wagtaildocs.0014_alter_document_file_size... OK
+  Applying wagtailimages.0001_squashed_0021... OK
+  Applying wagtailimages.0022_uploadedimage... OK
+  Applying wagtailimages.0023_add_choose_permissions... OK
+  Applying wagtailimages.0024_index_image_file_hash... OK
+  Applying wagtailimages.0025_alter_image_file_alter_rendition_file... OK
+  Applying wagtailimages.0026_delete_uploadedimage... OK
+  Applying wagtailimages.0027_image_description... OK
+  Applying home.0003_blogpage... OK
+  Applying home.0004_blogpage_policy... OK
+  Applying home.0005_petpage... OK
+  Applying sessions.0001_initial... OK
+  Applying taggit.0002_auto_20150616_2121... OK
+  Applying taggit.0003_taggeditem_add_unique_index... OK
+  Applying taggit.0004_alter_taggeditem_content_type_alter_taggeditem_tag... OK
+  Applying taggit.0005_auto_20220424_2025... OK
+  Applying taggit.0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx... OK
+  Applying wagtailadmin.0002_admin... OK
+  Applying wagtailadmin.0003_admin_managed... OK
+  Applying wagtailadmin.0004_editingsession... OK
+  Applying wagtailadmin.0005_editingsession_is_editing... OK
+  Applying wagtailembeds.0001_initial... OK
+  Applying wagtailembeds.0002_add_verbose_names... OK
+  Applying wagtailembeds.0003_capitalizeverbose... OK
+  Applying wagtailembeds.0004_embed_verbose_name_plural... OK
+  Applying wagtailembeds.0005_specify_thumbnail_url_max_length... OK
+  Applying wagtailembeds.0006_add_embed_hash... OK
+  Applying wagtailembeds.0007_populate_hash... OK
+  Applying wagtailembeds.0008_allow_long_urls... OK
+  Applying wagtailembeds.0009_embed_cache_until... OK
+  Applying wagtailforms.0001_initial... OK
+  Applying wagtailforms.0002_add_verbose_names... OK
+  Applying wagtailforms.0003_capitalizeverbose... OK
+  Applying wagtailforms.0004_add_verbose_name_plural... OK
+  Applying wagtailforms.0005_alter_formsubmission_form_data... OK
+  Applying wagtailredirects.0001_initial... OK
+  Applying wagtailredirects.0002_add_verbose_names... OK
+  Applying wagtailredirects.0003_make_site_field_editable... OK
+  Applying wagtailredirects.0004_set_unique_on_path_and_site... OK
+  Applying wagtailredirects.0005_capitalizeverbose... OK
+  Applying wagtailredirects.0006_redirect_increase_max_length... OK
+  Applying wagtailredirects.0007_add_autocreate_fields... OK
+  Applying wagtailredirects.0008_add_verbose_name_plural... OK
+  Applying wagtailsearch.0001_initial... OK
+  Applying wagtailsearch.0002_add_verbose_names... OK
+  Applying wagtailsearch.0003_remove_editors_pick... OK
+  Applying wagtailsearch.0004_querydailyhits_verbose_name_plural... OK
+  Applying wagtailsearch.0005_create_indexentry... OK
+  Applying wagtailsearch.0006_customise_indexentry... OK
+  Applying wagtailsearch.0007_delete_editorspick... OK
+  Applying wagtailsearch.0008_remove_query_and_querydailyhits_models... OK
+  Applying wagtailsearch.0009_remove_ngram_autocomplete... OK
+  Applying wagtailusers.0001_initial... OK
+  Applying wagtailusers.0002_add_verbose_name_on_userprofile... OK
+  Applying wagtailusers.0003_add_verbose_names... OK
+  Applying wagtailusers.0004_capitalizeverbose... OK
+  Applying wagtailusers.0005_make_related_name_wagtail_specific... OK
+  Applying wagtailusers.0006_userprofile_prefered_language... OK
+  Applying wagtailusers.0007_userprofile_current_time_zone... OK
+  Applying wagtailusers.0008_userprofile_avatar... OK
+  Applying wagtailusers.0009_userprofile_verbose_name_plural... OK
+  Applying wagtailusers.0010_userprofile_updated_comments_notifications... OK
+  Applying wagtailusers.0011_userprofile_dismissibles... OK
+  Applying wagtailusers.0012_userprofile_theme... OK
+  Applying wagtailusers.0013_userprofile_density... OK
+  Applying wagtailusers.0014_userprofile_contrast... OK
+  Applying wagtailusers.0015_userprofile_keyboard_shortcuts... OK
+#+end_example
 
 * Block factories
 
@@ -220,6 +402,8 @@ With our model and block definitions in place, it's time to create our block fac
 - ~DocumentChooserBlockFactory~;
 - ~ImageBlockFactory~; and
 - some factories atomic block types, although as we'll see they aren't as essential as the factories for compound block types.
+
+Creating factories for our block types, like we would for ~Page~ classes or other Django models, will help us to easily create meaningful values for tests and placeholder content.
 
 We'll start with the bottom of the tree, a factory for ~ScheduledFeedingBlock~.
 
@@ -248,7 +432,7 @@ Add the following code to ~home/factories.py~.
 We have:
 
 - created a ~StructBlockFactory~ subclass for our ~StructBlock~ subclass;
-- added a field for each field on the block definition; and
+- added one declaration for each field on the block definition; and
 - added an inner ~Meta~ class with a ~model~ attribute which is the corresponding block class.
 
 The ~Meta.model~ declaration is essential: wagtail-factories needs this to create values of the correct type. It should be the relevant block class.
@@ -263,9 +447,9 @@ In this example, we're using the API exposed by ~factory.Faker~. This helps us t
 #+end_src
 
 #+RESULTS:
-: StructValue([('time', datetime.time(20, 38, 43, 521698)),
-:              ('portions', 71),
-:              ('food', 'tuna')])
+: StructValue([('time', datetime.time(7, 51, 46, 566552)),
+:              ('portions', 82),
+:              ('food', 'carrots')])
 
 We can also specify values for some or all of the fields.
 
@@ -277,9 +461,11 @@ We can also specify values for some or all of the fields.
 #+end_src
 
 #+RESULTS:
-: StructValue([('time', datetime.time(21, 8, 30, 44821)),
+: StructValue([('time', datetime.time(11, 40, 0, 806921)),
 :              ('portions', 3),
 :              ('food', 'kibble')])
+
+In the next section, we'll learn how to create and use factories for another of Wagtail's compound block types: ~StreamBlock~.
 
 ** Stream block factories
 
@@ -323,9 +509,6 @@ Again, note the inner ~Meta~ class with ~model~ definition - this is required.
 Let's try using our new stream block value to generate a value.
 
 #+begin_src python :exports both :results value pp
-  import home.factories as f
-
-
   f.PetStoryBlockFactory()
 #+end_src
 
@@ -334,7 +517,7 @@ Let's try using our new stream block value to generate a value.
 
 With no parameters, an empty ~StreamValue~ is generated.
 
-Given that a ~StreamValue~ is an ordered sequence type, how do we specify values for its elements? wagtail-factories supports a syntax for declaring parameters that includes indices for list block and stream block factories. That syntax comes in two flavours:
+Given that a ~StreamValue~ is an ordered sequence type, how do we specify values for its elements? wagtail-factories supports a syntax for declaring parameters that includes indices for list block and stream block factories. For stream block factories, that syntax comes in two flavours:
 
 1. a "default value" flavour; and
 2. a "specified value" flavour.
@@ -352,7 +535,9 @@ So, to create an instance of ~PetStoryBlock~ where the first element is a text b
 #+end_src
 
 #+RESULTS:
-: <StreamValue [<block text: 'Candidate current floor forward.'>]>
+: <StreamValue [<block text: 'Various since short.'>]>
+
+This creates a block instance at index 0 using a default value as provided by the ~text~ declaration on ~PetStoryBlockFactory~.
 
 Ideally, we wouldn't need the dict-unpacking to insert the keyword-argument parameters, but Python identifiers cannot begin with a numeric character. This will not be an issue when used in the context of a page (or other containing model), as you'll see in later examples.
 
@@ -371,14 +556,14 @@ For example:
 #+RESULTS:
 : <StreamValue [<block text: 'hello'>]>
 
-We can combine these two syntaxes arbitrarily, and create streams with multiple elements:
+This lets us specify the position of the block in the stream, the type of block, and its value. We can combine these two syntaxes arbitrarily, and create streams with multiple elements:
 
 #+begin_src python :exports both :results value pp
   f.PetStoryBlockFactory(**{"0__text": "hello", "1": "link", "2": "text"})
 #+end_src
 
 #+RESULTS:
-: <StreamValue [<block text: 'hello'>, <block link: 'https://www.harrington-peterson.com/category/categoriesregister.asp'>, <block text: 'Gas rather business design price fire score.'>]>
+: <StreamValue [<block text: 'hello'>, <block link: 'http://baxter-harris.org/categories/app/searchlogin.html'>, <block text: 'Box cut better matter.'>]>
 
 However, indices /must/ start at zero, and /must/ be sequential.
 
@@ -402,6 +587,12 @@ We can also use double-underscores to traverse the block definition tree, and sp
 #+RESULTS:
 : True
 
+This declaration can be read as:
+
+#+begin_quote
+<index>__<block name>__<block field>=<value>
+#+end_quote
+
 To specify multiple values for a particular nested block, we can add declarations with the same ~<index>__<block_name>~ prefix.
 
 #+begin_src python :exports code :results value pp
@@ -409,6 +600,7 @@ To specify multiple values for a particular nested block, we can add declaration
       ,**{
           "0__image__decorative": False,
           "0__image__alt_text": "An orange cat lying in the sun",
+          "0__image__image__image__file__color": "orange",
       }
   )
 
@@ -418,7 +610,9 @@ To specify multiple values for a particular nested block, we can add declaration
 #+RESULTS:
 : (False, 'An orange cat lying in the sun')
 
-** Tying it all together
+** Factories for list blocks
+
+With the nested factory definitions taken care of, we can now create a factory for our ~PetBlock~.
 
 #+begin_src python :eval no :tangle "../../home/factories.py" :comments link
   from wagtail_factories import (
@@ -427,12 +621,11 @@ To specify multiple values for a particular nested block, we can add declaration
       PageFactory,
       StreamFieldFactory,
   )
-  from home.blocks import PetBlock, get_colour_choices, CatBlock, DogBlock, PetsBlock
-  from home.models import PetPage
+  from home.blocks import PetBlock, get_colour_choices
 
 
   class PetBlockFactory(StructBlockFactory):
-      story = factory.SubFactory(PetStoryBlockFactory)
+      story = StreamFieldFactory(PetStoryBlockFactory)
       name = factory.Faker("name")
       date_of_birth = factory.Faker("date_object")
       feeding_schedule = ListBlockFactory(ScheduledFeedingBlockFactory)
@@ -443,6 +636,84 @@ To specify multiple values for a particular nested block, we can add declaration
 
       class Meta:
           model = PetBlock
+#+end_src
+
+This example illustrates an important point:
+
+- when creating a factory with nested block factories, we must use ~factory.SubFactory~ to refer to those sub-factories lazily; /unless/
+- the corresponding sub-block is a ~StreamBlock~, in which case we can use ~StreamFieldFactory~[fn:1]; /or/
+- we're providing a value/factory by other means (e.g. a literal value, a faker instance); /or/
+- the corresponding sub-block is a ~ListBlock~.
+
+If the corresponding sub-block is a ~ListBlock~, we use ~ListBlockFactory~, as seen in the declaration for ~feeding_schedule~, above.
+
+The syntax for declaring values for list block elements is similar to that of stream block factories, except:
+
+- there is no shorthand for providing a default value; and
+- we do not need to specify the block type, as list block values are homogenous sequences.
+
+The syntax is:
+
+#+begin_quote
+<index>=<value>
+#+end_quote
+
+Let's create some ~PetBlock~ instances, providing values for the feeding schedule.
+
+#+begin_src python :exports code :results value pp
+  f.PetBlockFactory()
+#+end_src
+
+#+RESULTS:
+: StructValue([('story', <StreamValue []>),
+:              ('name', 'Jordan Nunez'),
+:              ('date_of_birth', datetime.date(2014, 1, 14)),
+:              ('feeding_schedule', <ListValue: []>),
+:              ('colour', 'tabby'),
+:              ('picture', <Image: An image>)])
+
+Without parameters, an empty ~ListValue~ is generated for ~feeding_schedule~. Let's add some data for a pet that loves tuna.
+
+#+begin_src python :exports code :results value pp
+  from datetime import time
+
+  f.PetBlockFactory(
+      feeding_schedule__0__food="tuna",
+      feeding_schedule__0__time=time(6, 0),
+      feeding_schedule__1__food="tuna",
+      feeding_schedule__1__time=time(12, 0),
+      feeding_schedule__2__food="tuna",
+      feeding_schedule__2__time=time(18, 0),
+  )["feeding_schedule"]
+#+end_src
+
+#+RESULTS:
+: <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 80), ('food', 'tuna')]), StructValue([('time', datetime.time(12, 0)), ('portions', 22), ('food', 'tuna')]), StructValue([('time', datetime.time(18, 0)), ('portions', 83), ('food', 'tuna')])]>
+
+If we only care /when/ the pet is fed, we can declare the times only, and the factory mechanisms will take care of the rest.
+
+#+begin_src python :exports code :results value pp
+  f.PetBlockFactory(
+      feeding_schedule__0__time=time(6, 0),
+      feeding_schedule__1__time=time(12, 0),
+      feeding_schedule__2__time=time(18, 0),
+      feeding_schedule__3__time=time(23, 0),
+  )["feeding_schedule"]
+#+end_src
+
+#+RESULTS:
+: <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 53), ('food', 'tuna')]), StructValue([('time', datetime.time(12, 0)), ('portions', 61), ('food', 'kibble')]), StructValue([('time', datetime.time(18, 0)), ('portions', 30), ('food', 'kibble')]), StructValue([('time', datetime.time(23, 0)), ('portions', 42), ('food', 'carrots')])]>
+
+As with stream block factories, the aggregated block indices must result in an uninterrupted sequence of integers starting from 0.
+
+** Tying it all together
+
+Let's create our final block factories, and bundle them into the ~PetPageFactory~.
+
+~StreamBlockFactory~ supports sub-classing, just like ~StreamBlock~, so create the following factories in ~home/factories.py~.
+
+#+begin_src python :eval no :tangle "../../home/factories.py" :comments link
+  from home.blocks import CatBlock, DogBlock
 
 
   class CatBlockFactory(PetBlockFactory):
@@ -453,6 +724,12 @@ To specify multiple values for a particular nested block, we can add declaration
   class DogBlockFactory(PetBlockFactory):
       class Meta:
           model = DogBlock
+#+end_src
+
+Then add them to our top-level ~PetsBlockFactory~.
+
+#+begin_src python :eval no :tangle "../../home/factories.py" :comments link
+  from home.blocks import PetsBlock
 
 
   class PetsBlockFactory(StreamBlockFactory):
@@ -461,6 +738,16 @@ To specify multiple values for a particular nested block, we can add declaration
 
       class Meta:
           model = PetsBlock
+#+end_src
+
+And finally, create ~PetPageFactory~.
+
+#+begin_src python :eval no :tangle "../../home/factories.py" :comments link
+  from wagtail_factories import (
+      PageFactory,
+      StreamFieldFactory,
+  )
+  from home.models import PetPage
 
 
   class PetPageFactory(PageFactory):
@@ -469,3 +756,165 @@ To specify multiple values for a particular nested block, we can add declaration
       class Meta:
           model = PetPage
 #+end_src
+
+We've now built a family of factories from the bottom up, that mirrors our data-type definition. The following diagram illustrates the factory hierarchy we've created:
+
+#+begin_example
+PetPageFactory
+└── pets (StreamFieldFactory)
+    └── PetsBlockFactory (StreamBlockFactory)
+        ├── cat (SubFactory)
+        │   └── CatBlockFactory (PetBlockFactory)
+        │       ├── story (StreamFieldFactory)
+        │       │   └── PetStoryBlockFactory (StreamBlockFactory)
+        │       │       ├── image (SubFactory → ImageBlockFactory)
+        │       │       ├── text (Faker)
+        │       │       └── link (Faker)
+        │       ├── name (Faker)
+        │       ├── date_of_birth (Faker)
+        │       ├── feeding_schedule (ListBlockFactory)
+        │       │   └── ScheduledFeedingBlockFactory (StructBlockFactory)
+        │       │       ├── time (Faker)
+        │       │       ├── portions (Faker)
+        │       │       └── food (Faker)
+        │       ├── colour (Faker)
+        │       └── picture (SubFactory → ImageBlockFactory)
+        └── dog (SubFactory)
+            └── DogBlockFactory (PetBlockFactory)
+                [same structure as CatBlockFactory]
+#+end_example
+
+This hierarchy shows how each factory builds upon its sub-factories, creating a complete system for generating test data for complex Wagtail stream field structures.
+
+** Taking it for a spin
+
+We can now test our factories, and get familiar with the syntax for declaring stream field structures. The simplest use is to call the ~PetPageFactory~ with no parameters.
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory()
+  page
+#+end_src
+
+#+RESULTS:
+: <PetPage: Test page>
+
+We can see that the stream field is empty.
+
+#+begin_src python :exports code :results value pp
+  page.pets
+#+end_src
+
+#+RESULTS:
+: <StreamValue []>
+
+Let's create a ~CatBlock~ and a ~DogBlock~ at the top level, using the factory defaults.
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory(
+      pets__0="cat",
+      pets__1="dog",
+  )
+  page.pets
+#+end_src
+
+#+RESULTS:
+: <StreamValue [<block cat: StructValue([('story', <StreamValue []>), ('name', 'David Perez'), ('date_of_birth', datetime.date(1992, 4, 2)), ('feeding_schedule', <ListValue: []>), ('colour', 'orange'), ('picture', <Image: An image>)])>, <block dog: StructValue([('story', <StreamValue []>), ('name', 'Jasmine Smith'), ('date_of_birth', datetime.date(1998, 8, 6)), ('feeding_schedule', <ListValue: []>), ('colour', 'orange'), ('picture', <Image: An image>)])>]>
+
+The syntax used here mirrors the "default value" syntax described [[*Using a stream block factory][earlier]], with the added prefix for the stream field name:
+
+#+begin_quote
+pets__0="cat"
+
+<model field name>__<stream field index>=<block name>
+#+end_quote
+
+Let's create an instance with some specific values for the ~CatBlock~ struct block.
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory(
+      pets__0__cat__name="Praxidike",
+      pets__0__cat__colour="tabby",
+  )
+  page.pets[0]
+#+end_src
+
+#+RESULTS:
+: <block cat: StructValue([('story', <StreamValue []>), ('name', 'Praxidike'), ('date_of_birth', datetime.date(2014, 4, 26)), ('feeding_schedule', <ListValue: []>), ('colour', 'tabby'), ('picture', <Image: An image>)])>
+
+The declaration syntax here is:
+
+#+begin_quote
+<field>__<index>__<block name>__<field name>=<value>
+#+end_quote
+
+What about nested stream blocks? ~CatBlock.story~ is such a block. To declare values, we follow the syntactic patterns we've already encountered for stream values:
+
+#+begin_quote
+<index>=<block name> for a default; or
+<index>__<block name>=<value>
+#+end_quote
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory(
+      pets__0__cat__name="Praxidike",
+      pets__0__cat__colour="tabby",
+      pets__0__cat__story__0="text",
+      pets__0__cat__story__1__link="https://http.cat/",
+  )
+  page.pets[0]
+#+end_src
+
+#+RESULTS:
+: <block cat: StructValue([('story', <StreamValue [<block text: 'Certainly pattern run can.'>, <block link: 'https://http.cat/'>]>), ('name', 'Praxidike'), ('date_of_birth', datetime.date(1980, 12, 9)), ('feeding_schedule', <ListValue: []>), ('colour', 'tabby'), ('picture', <Image: An image>)])>
+
+Prax needs to eat, so we should add some entries to the feeding schedule. Recall that the basic syntax for declaring list block elements is:
+
+#+begin_quote
+<index>=<value>
+#+end_quote
+
+This composes across field and factory boundaries as in our other examples. So, to specify values for the fields of a struct block:
+
+#+begin_quote
+<index>__<field name>=<value>
+#+end_quote
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory(
+      pets__0__cat__feeding_schedule__0__time="06:00:00",
+      pets__0__cat__feeding_schedule__1__food="tuna",
+  )
+  page.refresh_from_db()          # Normalizes the time value.
+  page.pets[0].value["feeding_schedule"]
+#+end_src
+
+#+RESULTS:
+: <ListValue: [StructValue([('time', datetime.time(6, 0)), ('portions', 77), ('food', 'carrots')]), StructValue([('time', datetime.time(3, 24, 8, 54000)), ('portions', 62), ('food', 'tuna')])]>
+
+Finally, here's an example of specifying multiple fields on multiple stream elements.
+
+#+begin_src python :exports code :results value pp
+  page = f.PetPageFactory(
+      pets__0__cat__name="Frog",
+      pets__0__cat__story__0="text",
+      pets__0__cat__story__1__link="https://http.cat/",
+      pets__1="cat",
+      pets__2__dog__name="Werner",
+      pets__2__dog__colour="orange",
+      pets__2__dog__feeding_schedule__0__time="08:30:00",
+      pets__2__dog__feeding_schedule__1__time="12:30:00",
+      pets__2__dog__feeding_schedule__2__time="18:30:00",
+      pets__2__dog__story__0="text",
+      pets__2__dog__picture__image__image__file__width=200,
+  )
+
+  page
+#+end_src
+
+#+RESULTS:
+: <PetPage: Test page>
+
+
+* Footnotes
+
+[fn:1] Technically we can use ~factory.SubFactory~ instead of ~StreamFieldFactory~ for nested stream block factory declarations, and it is common to see this in the wild. However, this will result in errors if the containing block factory is used directly - i.e. not in the context of a containing model factory with a top level ~StreamFieldFactory~. This discrepancy should be resolved in a future release of wagtail-factories.

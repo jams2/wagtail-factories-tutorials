@@ -28,7 +28,7 @@ Before creating any factories, we will create a Django model with a stream field
     class PetPage(Page):
         pets = StreamField(PetsBlock())
 
-We need to define ``PetsBlock``, so create it in ``home/blocks.py``.
+We need to define ``PetsBlock``, so create it and its sub-blocks in ``home/blocks.py``.
 
 .. code:: python
 
@@ -89,7 +89,7 @@ The block definition contains a variety of structures:
 
 - choice blocks; and
 
-- various atomic block types.
+- various other atomic block types.
 
 Create and run the migrations.
 
@@ -121,6 +121,8 @@ With our model and block definitions in place, it's time to create our block fac
 
 - some factories atomic block types, although as we'll see they aren't as essential as the factories for compound block types.
 
+Creating factories for our block types, like we would for ``Page`` classes or other Django models, will help us to easily create meaningful values for tests and placeholder content.
+
 We'll start with the bottom of the tree, a factory for ``ScheduledFeedingBlock``.
 
 Factories for struct blocks
@@ -150,7 +152,7 @@ We have:
 
 - created a ``StructBlockFactory`` subclass for our ``StructBlock`` subclass;
 
-- added a field for each field on the block definition; and
+- added one declaration for each field on the block definition; and
 
 - added an inner ``Meta`` class with a ``model`` attribute which is the corresponding block class.
 
@@ -167,9 +169,9 @@ In this example, we're using the API exposed by ``factory.Faker``. This helps us
 
 ::
 
-    StructValue([('time', datetime.time(17, 33, 0, 263039)),
-                 ('portions', 53),
-                 ('food', 'salmon')])
+    StructValue([('time', datetime.time(7, 3, 55, 232225)),
+                 ('portions', 30),
+                 ('food', 'tuna')])
 
 
 We can also specify values for some or all of the fields.
@@ -183,9 +185,12 @@ We can also specify values for some or all of the fields.
 
 ::
 
-    StructValue([('time', datetime.time(5, 25, 22, 876678)),
+    StructValue([('time', datetime.time(11, 21, 27, 217783)),
                  ('portions', 3),
                  ('food', 'kibble')])
+
+
+In the next section, we'll learn how to create and use factories for another of Wagtail's compound block types: ``StreamBlock``.
 
 Stream block factories
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -232,9 +237,6 @@ Let's try using our new stream block value to generate a value.
 
 .. code:: python
 
-    import home.factories as f
-
-
     f.PetStoryBlockFactory()
 
 ::
@@ -244,7 +246,7 @@ Let's try using our new stream block value to generate a value.
 
 With no parameters, an empty ``StreamValue`` is generated.
 
-Given that a ``StreamValue`` is an ordered sequence type, how do we specify values for its elements? wagtail-factories supports a syntax for declaring parameters that includes indices for list block and stream block factories. That syntax comes in two flavours:
+Given that a ``StreamValue`` is an ordered sequence type, how do we specify values for its elements? wagtail-factories supports a syntax for declaring parameters that includes indices for list block and stream block factories. For stream block factories, that syntax comes in two flavours:
 
 1. a "default value" flavour; and
 
@@ -264,8 +266,10 @@ So, to create an instance of ``PetStoryBlock`` where the first element is a text
 
 ::
 
-    <StreamValue [<block text: 'That notice short tell support very inside.'>]>
+    <StreamValue [<block text: 'Soon for dream itself policy half.'>]>
 
+
+This creates a block instance at index 0 using a default value as provided by the ``text`` declaration on ``PetStoryBlockFactory``.
 
 Ideally, we wouldn't need the dict-unpacking to insert the keyword-argument parameters, but Python identifiers cannot begin with a numeric character. This will not be an issue when used in the context of a page (or other containing model), as you'll see in later examples.
 
@@ -286,7 +290,7 @@ For example:
     <StreamValue [<block text: 'hello'>]>
 
 
-We can combine these two syntaxes arbitrarily, and create streams with multiple elements:
+This lets us specify the position of the block in the stream, the type of block, and its value. We can combine these two syntaxes arbitrarily, and create streams with multiple elements:
 
 .. code:: python
 
@@ -294,7 +298,7 @@ We can combine these two syntaxes arbitrarily, and create streams with multiple 
 
 ::
 
-    <StreamValue [<block text: 'hello'>, <block link: 'https://porter.com/tags/mainregister.htm'>, <block text: 'A research marriage score strategy eye though finally.'>]>
+    <StreamValue [<block text: 'hello'>, <block link: 'https://www.carroll.info/searchsearch.html'>, <block text: 'Affect keep show specific.'>]>
 
 
 However, indices *must* start at zero, and *must* be sequential.
@@ -316,6 +320,12 @@ We can also use double-underscores to traverse the block definition tree, and sp
     with_image = f.PetStoryBlockFactory(**{"0__image__decorative": True})
     with_image[0].value.decorative
 
+This declaration can be read as:
+
+::
+
+    <index>\_\_<block name>\_\_<block field>=<value>
+
 To specify multiple values for a particular nested block, we can add declarations with the same ``<index>__<block_name>`` prefix.
 
 .. code:: python
@@ -324,13 +334,16 @@ To specify multiple values for a particular nested block, we can add declaration
         **{
             "0__image__decorative": False,
             "0__image__alt_text": "An orange cat lying in the sun",
+            "0__image__image__image__file__color": "orange",
         }
     )
 
     with_image[0].value.decorative, with_image[0].value.contextual_alt_text
 
-Tying it all together
-~~~~~~~~~~~~~~~~~~~~~
+Factories for list blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With the nested factory definitions taken care of, we can now create a factory for our ``PetBlock``.
 
 .. code:: python
 
@@ -340,12 +353,11 @@ Tying it all together
         PageFactory,
         StreamFieldFactory,
     )
-    from home.blocks import PetBlock, get_colour_choices, CatBlock, DogBlock, PetsBlock
-    from home.models import PetPage
+    from home.blocks import PetBlock, get_colour_choices
 
 
     class PetBlockFactory(StructBlockFactory):
-        story = factory.SubFactory(PetStoryBlockFactory)
+        story = StreamFieldFactory(PetStoryBlockFactory)
         name = factory.Faker("name")
         date_of_birth = factory.Faker("date_object")
         feeding_schedule = ListBlockFactory(ScheduledFeedingBlockFactory)
@@ -357,6 +369,75 @@ Tying it all together
         class Meta:
             model = PetBlock
 
+This example illustrates an important point:
+
+- when creating a factory with nested block factories, we must use ``factory.SubFactory`` to refer to those sub-factories lazily; *unless*
+
+- the corresponding sub-block is a ``StreamBlock``, in which case we can use ``StreamFieldFactory`` [1]_ ; *or*
+
+- we're providing a value/factory by other means (e.g. a literal value, a faker instance); *or*
+
+- the corresponding sub-block is a ``ListBlock``.
+
+If the corresponding sub-block is a ``ListBlock``, we use ``ListBlockFactory``, as seen in the declaration for ``feeding_schedule``, above.
+
+The syntax for declaring values for list block elements is similar to that of stream block factories, except:
+
+- there is no shorthand for providing a default value; and
+
+- we do not need to specify the block type, as list block values are homogenous sequences.
+
+The syntax is:
+
+::
+
+    <index>=<value>
+
+Let's create some ``PetBlock`` instances, providing values for the feeding schedule.
+
+.. code:: python
+
+    f.PetBlockFactory()
+
+Without parameters, an empty ``ListValue`` is generated for ``feeding_schedule``. Let's add some data for a pet that loves tuna.
+
+.. code:: python
+
+    from datetime import time
+
+    f.PetBlockFactory(
+        feeding_schedule__0__food="tuna",
+        feeding_schedule__0__time=time(6, 0),
+        feeding_schedule__1__food="tuna",
+        feeding_schedule__1__time=time(12, 0),
+        feeding_schedule__2__food="tuna",
+        feeding_schedule__2__time=time(18, 0),
+    )["feeding_schedule"]
+
+If we only care *when* the pet is fed, we can declare the times only, and the factory mechanisms will take care of the rest.
+
+.. code:: python
+
+    f.PetBlockFactory(
+        feeding_schedule__0__time=time(6, 0),
+        feeding_schedule__1__time=time(12, 0),
+        feeding_schedule__2__time=time(18, 0),
+        feeding_schedule__3__time=time(23, 0),
+    )["feeding_schedule"]
+
+As with stream block factories, the aggregated block indices must result in an uninterrupted sequence of integers starting from 0.
+
+Tying it all together
+~~~~~~~~~~~~~~~~~~~~~
+
+Let's create our final block factories, and bundle them into the ``PetPageFactory``.
+
+``StreamBlockFactory`` supports sub-classing, just like ``StreamBlock``, so create the following factories in ``home/factories.py``.
+
+.. code:: python
+
+    from home.blocks import CatBlock, DogBlock
+
 
     class CatBlockFactory(PetBlockFactory):
         class Meta:
@@ -367,6 +448,12 @@ Tying it all together
         class Meta:
             model = DogBlock
 
+Then add them to our top-level ``PetsBlockFactory``.
+
+.. code:: python
+
+    from home.blocks import PetsBlock
+
 
     class PetsBlockFactory(StreamBlockFactory):
         cat = factory.SubFactory(CatBlockFactory)
@@ -375,9 +462,159 @@ Tying it all together
         class Meta:
             model = PetsBlock
 
+And finally, create ``PetPageFactory``.
+
+.. code:: python
+
+    from wagtail_factories import (
+        PageFactory,
+        StreamFieldFactory,
+    )
+    from home.models import PetPage
+
 
     class PetPageFactory(PageFactory):
         pets = StreamFieldFactory(PetsBlockFactory)
 
         class Meta:
             model = PetPage
+
+We've now built a family of factories from the bottom up, that mirrors our data-type definition. The following diagram illustrates the factory hierarchy we've created:
+
+::
+
+    PetPageFactory
+    └── pets (StreamFieldFactory)
+        └── PetsBlockFactory (StreamBlockFactory)
+            ├── cat (SubFactory)
+            │   └── CatBlockFactory (PetBlockFactory)
+            │       ├── story (StreamFieldFactory)
+            │       │   └── PetStoryBlockFactory (StreamBlockFactory)
+            │       │       ├── image (SubFactory → ImageBlockFactory)
+            │       │       ├── text (Faker)
+            │       │       └── link (Faker)
+            │       ├── name (Faker)
+            │       ├── date_of_birth (Faker)
+            │       ├── feeding_schedule (ListBlockFactory)
+            │       │   └── ScheduledFeedingBlockFactory (StructBlockFactory)
+            │       │       ├── time (Faker)
+            │       │       ├── portions (Faker)
+            │       │       └── food (Faker)
+            │       ├── colour (Faker)
+            │       └── picture (SubFactory → ImageBlockFactory)
+            └── dog (SubFactory)
+                └── DogBlockFactory (PetBlockFactory)
+                    [same structure as CatBlockFactory]
+
+This hierarchy shows how each factory builds upon its sub-factories, creating a complete system for generating test data for complex Wagtail stream field structures.
+
+Taking it for a spin
+~~~~~~~~~~~~~~~~~~~~
+
+We can now test our factories, and get familiar with the syntax for declaring stream field structures. The simplest use is to call the ``PetPageFactory`` with no parameters.
+
+.. code:: python
+
+    page = f.PetPageFactory()
+    page
+
+We can see that the stream field is empty.
+
+.. code:: python
+
+    page.pets
+
+Let's create a ``CatBlock`` and a ``DogBlock`` at the top level, using the factory defaults.
+
+.. code:: python
+
+    page = f.PetPageFactory(
+        pets__0="cat",
+        pets__1="dog",
+    )
+    page.pets
+
+The syntax used here mirrors the "default value" syntax described `Using a stream block factory`_, with the added prefix for the stream field name:
+
+::
+
+    pets\_\ :sub:`0`\="cat"
+
+    <model field name>\_\_<stream field index>=<block name>
+
+Let's create an instance with some specific values for the ``CatBlock`` struct block.
+
+.. code:: python
+
+    page = f.PetPageFactory(
+        pets__0__cat__name="Praxidike",
+        pets__0__cat__colour="tabby",
+    )
+    page.pets[0]
+
+The declaration syntax here is:
+
+::
+
+    <field>\_\_<index>\_\_<block name>\_\_<field name>=<value>
+
+What about nested stream blocks? ``CatBlock.story`` is such a block. To declare values, we follow the syntactic patterns we've already encountered for stream values:
+
+::
+
+    <index>=<block name> for a default; or
+    <index>\_\_<block name>=<value>
+
+.. code:: python
+
+    page = f.PetPageFactory(
+        pets__0__cat__name="Praxidike",
+        pets__0__cat__colour="tabby",
+        pets__0__cat__story__0="text",
+        pets__0__cat__story__1__link="https://http.cat/",
+    )
+    page.pets[0]
+
+Prax needs to eat, so we should add some entries to the feeding schedule. Recall that the basic syntax for declaring list block elements is:
+
+::
+
+    <index>=<value>
+
+This composes across field and factory boundaries as in our other examples. So, to specify values for the fields of a struct block:
+
+::
+
+    <index>\_\_<field name>=<value>
+
+.. code:: python
+
+    page = f.PetPageFactory(
+        pets__0__cat__feeding_schedule__0__time="06:00:00",
+        pets__0__cat__feeding_schedule__1__food="tuna",
+    )
+    page.refresh_from_db()          # Normalizes the time value.
+    page.pets[0].value["feeding_schedule"]
+
+Finally, here's an example of specifying multiple fields on multiple stream elements.
+
+.. code:: python
+
+    page = f.PetPageFactory(
+        pets__0__cat__name="Frog",
+        pets__0__cat__story__0="text",
+        pets__0__cat__story__1__link="https://http.cat/",
+        pets__1="cat",
+        pets__2__dog__name="Werner",
+        pets__2__dog__colour="orange",
+        pets__2__dog__feeding_schedule__0__time="08:30:00",
+        pets__2__dog__feeding_schedule__1__time="12:30:00",
+        pets__2__dog__feeding_schedule__2__time="18:30:00",
+        pets__2__dog__story__0="text",
+        pets__2__dog__picture__image__image__file__width=200,
+    )
+
+    page
+
+
+.. [1] Technically we can use ``factory.SubFactory`` instead of ``StreamFieldFactory`` for nested stream block factory declarations, and it is common to see this in the wild. However, this will result in errors if the containing block factory is used directly - i.e. not in the context of a containing model factory with a top level ``StreamFieldFactory``. This discrepancy should be resolved in a future release of wagtail-factories.
